@@ -1,10 +1,10 @@
-# SERP Market Map
+# SERP Query Opportunity Map
 
-A marketer-facing CLI for turning a small set of Bright Data Google SERPs into an evidence-linked view of domains, result positions, titles, and snippets. Domain frequency is a snapshot description, not a traffic estimate or SEO forecast.
+A marketer-facing CLI for turning a small set of Bright Data Google SERPs into an evidence-linked query opportunity brief: query intent, domains recurring across a query set, observed result formats, and content formats not seen in the returned sample. It does not estimate traffic, market share, or guaranteed SEO outcomes.
 
 ## Use cases and architecture
 
-Compare who appears for a set of buyer-intent, category, and content queries; identify recurring cited domains and inspect pages manually for gaps. Flow: `query + locale -> Bright Data SERP API -> normalized organic rows -> domain frequency summary -> JSON/CSV`. Runtime uses Python 3.10+ standard library.
+Compare competitors across a deliberately scoped set of commercial, transactional, and informational queries; inspect query intent, domain overlap, and which title-level content formats appeared in the bounded result sample. Flow: `queries + locale -> Bright Data SERP API -> intent/archetype classification -> query opportunity brief`. Runtime uses Python 3.10+ standard library.
 
 ## Setup
 
@@ -31,7 +31,13 @@ Dry-run prints planned request count and sends no HTTP request. Each query is a 
 
 ## Output
 
-JSON contains normalized `results`, a `domain_summary` grouped by both query and domain, and a caveat. Summary rows contain `query`, `domain`, and `results` count so recurring visibility does not erase the query context. Result rows contain `query`, `country`, `language`, `position`, `title`, `url`, `domain`, `snippet`, and UTC `observed_at`. CSV emits result rows. Missing snippets are empty. Duplicate canonical host/path results are removed per query response. The sample fixture is illustrative and is used by the offline parser tests.
+JSON contains normalized `results`, query-level `intent`, observed content formats, `content_opportunities` marked `not_observed_in_returned_sample`, cross-query `market_competitors`, and a caveat. Organic `position` uses the organic rank or one-based position in the returned organic list; `global_rank` is retained separately when supplied. Result rows include query intent, format, locale, ranks, title, URL, domain, snippet, and UTC `observed_at`. CSV exports result rows only; synthesis summaries and caveats are in JSON. These are opportunity prompts from a bounded result sample, not proof of a market gap; missing formats may simply rank below the returned results. Formula-leading scraped text is prefixed in CSV exports to reduce spreadsheet formula injection risk.
+
+Illustrative decision: a domain found across 4 of 6 scoped queries may merit manual competitor review; a `pricing` title format not observed for one query may suggest a content question to investigate. Neither count is market share, and absence from returned results does not prove absence from the market.
+
+## How this differs from existing tools
+
+Unlike `bright-data-google-search-scraper`, which focuses on general SERP collection/export across engines, this Google-focused tool synthesizes a small query set into intent buckets, cross-query domain overlap, and title-format prompts for a marketer’s next research action. It does not measure ChatGPT/AI brand visibility like `bright-data-chatgpt-visibility-checker`. Classification is literal/title-level, not a page-content audit or ranked recommendation engine.
 
 ## Caveats and ethical use
 
@@ -49,4 +55,4 @@ Search rankings change with time, engine, locale, device, and personalization. S
 python3 -m pytest -q
 ```
 
-Offline tests cover parsing, URL validation, duplicate normalization, locale carry-through, and domain summaries. MIT License.
+Offline tests cover parsing, URL validation, duplicate normalization, locale carry-through, intent classification, content archetypes, opportunity labeling, and query-aware competitor summaries. MIT License.
