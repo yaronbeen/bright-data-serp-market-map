@@ -1,10 +1,25 @@
 # SERP Query Opportunity Map
 
-A marketer-facing CLI for turning a small set of Bright Data Google SERPs into an evidence-linked query opportunity brief: query intent, domains recurring across a query set, observed result formats, and content formats not seen in the returned sample. It does not estimate traffic, market share, or guaranteed SEO outcomes.
+**Before you plan another SEO page, see what a small, deliberate set of Google searches actually returns.** SERP Query Opportunity Map turns those results into an evidence-linked brief: query intent, domains appearing across queries, observed title formats, and formats not seen in the returned sample. It helps a marketer choose what competitor or content question to inspect next; it does not estimate traffic, market share, or ranking outcomes.
 
 ## Use cases and architecture
 
 Compare competitors across a deliberately scoped set of commercial, transactional, and informational queries; inspect query intent, domain overlap, and which title-level content formats appeared in the bounded result sample. Flow: `queries + locale -> Bright Data SERP API -> intent/archetype classification -> query opportunity brief`. Runtime uses Python 3.10+ standard library.
+
+## Example: query set to content research decision
+
+A content lead is evaluating a CRM topic for US English search. They run a few deliberately chosen queries, such as a comparison query and a how-to query, then review which domains recur and which title-level formats appear in the returned organic results.
+
+Synthetic illustration: a competitor domain appears in 4 of 6 scoped query result sets, while no pricing-format title is observed for one query. That suggests two manual follow-ups: inspect the competitor pages and check whether a useful pricing page could answer the uncovered query. It does **not** mean the competitor owns two-thirds of the market, that searchers want a pricing page, or that publishing one will rank. “Not observed” means only absent from this returned sample.
+
+Offline request preview:
+
+```bash
+python3 market_map.py --query "best CRM for small teams" \\
+  --query "CRM onboarding guide" --country us --language en --dry-run
+```
+
+Dry-run validates parameters and prints the number of requests planned without calling Bright Data. A real run writes the normalized SERP results and synthesis to JSON by default; CSV contains normalized result rows only.
 
 ## Setup
 
@@ -56,3 +71,13 @@ python3 -m pytest -q
 ```
 
 Offline tests cover parsing, URL validation, duplicate normalization, locale carry-through, intent classification, content archetypes, opportunity labeling, and query-aware competitor summaries. MIT License.
+
+## FAQ
+
+**Does this tool check my site's rankings or traffic?** No. It records returned SERP results for each query. It does not estimate search volume, traffic, ranking probability, or outcomes.
+
+**What does a content opportunity mean?** A supported title-format category not observed in the returned results for that query. Treat it as a prompt to inspect the SERP and user need, not as proof of a market gap.
+
+**Can I use it offline?** You can run dry-run and the test suite locally. Producing a live market map requires Bright Data SERP API credentials and a configured SERP zone; each query is a separate request and may be billable.
+
+**Why specify country and language?** SERPs vary by locale. Those values are attached to each result so comparisons retain the context in which they were collected.
