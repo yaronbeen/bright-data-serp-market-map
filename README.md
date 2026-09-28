@@ -1,4 +1,6 @@
-# SERP Query Opportunity Map
+# Bright Data SERP Query Opportunity Map
+
+**Repository:** [bright-data-serp-market-map](https://github.com/yaronbeen/bright-data-serp-market-map) · **Data provider:** [Bright Data](https://brightdata.com/)
 
 **Before you plan another SEO page, see what a small, deliberate set of Google searches actually returns.** SERP Query Opportunity Map turns those results into an evidence-linked brief: query intent, domains appearing across queries, observed title formats, and formats not seen in the returned sample. It helps a marketer choose what competitor or content question to inspect next; it does not estimate traffic, market share, or ranking outcomes.
 
